@@ -1,6 +1,6 @@
 import { Entity, PrimaryColumn, Column } from "typeorm";
 
-@Entity()
+@Entity("balance")
 export class Balance {
   constructor(id: string, balance: number) {
     this.id = id;

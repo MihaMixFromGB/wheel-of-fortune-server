@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
-import * as dotenv from "dotenv";
+import dotenv from "dotenv";
 
 import { Balance } from "./entity/Balance";
 import { Winner } from "./entity/Winner";

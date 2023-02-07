@@ -1,7 +1,7 @@
-import * as express from "express";
-import * as http from "http";
+import express from "express";
+import http from "http";
 import { Server } from "socket.io";
-import * as dotenv from "dotenv";
+import dotenv from "dotenv";
 
 import { AppDataSource } from "./data-source";
 import { WinnerDto } from "./dto/WinnerDto";

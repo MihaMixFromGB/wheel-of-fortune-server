@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
 
-@Entity()
+@Entity("winner")
 export class Winner {
   constructor(name: string, avatar: string, prize: string) {
     this.name = name;
