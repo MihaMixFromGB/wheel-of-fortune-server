@@ -48,7 +48,7 @@ AppDataSource.initialize()
         }
 
         balanceEntity.balance -= bet;
-        balanceService.save(balanceEntity);
+        await balanceService.save(balanceEntity);
         jackpot += bet;
         io.emit("jackpot", jackpot);
         callback({
@@ -58,13 +58,34 @@ AppDataSource.initialize()
       });
 
       socket.on("winner", async (dto: WinnerDto) => {
-        const winner = await winnerService.save(dto);
+        let balanceEntity = await balanceService.one(dto.userId);
+        if (!balanceEntity) {
+          return;
+        }
 
+        const winner = await winnerService.save(dto);
         io.emit("winner", winner);
+
         if (dto.prize.toLocaleLowerCase() === "jackpot") {
+          balanceEntity.balance += jackpot;
           jackpot = 0;
           io.emit("jackpot", jackpot);
+          balanceEntity = await balanceService.save(balanceEntity);
+          io.emit("balance", balanceEntity.balance);
+          return;
         }
+
+        if (parseInt(dto.prize)) {
+          balanceEntity.balance += +dto.prize;
+          balanceEntity = await balanceService.save(balanceEntity);
+          io.emit("balance", balanceEntity.balance);
+        }
+      });
+
+      socket.on("jackpot:init", (callback) => {
+        callback({
+          jackpot,
+        });
       });
 
       socket.on("balance:init", async (userId, callback) => {
@@ -75,12 +96,6 @@ AppDataSource.initialize()
         }
 
         callback({ balance: balanceEntity.balance });
-      });
-
-      socket.on("jackpot:init", (callback) => {
-        callback({
-          jackpot,
-        });
       });
 
       socket.on("winners:init", async (callback) => {
